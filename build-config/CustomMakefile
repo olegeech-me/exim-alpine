@@ -1,0 +1,86 @@
+# Specify where Exim binaries and configuration should be installed
+BIN_DIRECTORY=/usr/bin
+CONFIGURE_FILE=/etc/exim/exim.conf
+SPOOL_DIRECTORY=/var/spool/exim
+SYSTEM_ALIASES_FILE=/etc/aliases
+
+# Define user and group for Exim process
+EXIM_USER=exim
+EXIM_GROUP=exim
+
+# Disable inclusion of execinfo.h to avoid dependency on execinfo.h
+CFLAGS += -DNO_EXECINFO
+
+# Enable IPv6 support
+HAVE_IPV6=yes
+
+# Enable PAM support
+SUPPORT_PAM=yes
+EXTRALIBS += -lpam -ldl
+
+# Enable OpenSSL
+USE_OPENSSL=yes
+TLS_LIBS=-lssl -lcrypto
+
+# Enable iconv support
+HAVE_ICONV=yes
+
+# Enable dynamic loading functions
+EXPAND_DLFUNC=yes
+EXTRALIBS += -ldl
+
+# Enable SPF support
+SUPPORT_SPF=yes
+LOOKUP_INCLUDE += -I/usr/include
+LOOKUP_LIBS += -lspf2
+
+# Enable DMARC support
+SUPPORT_DMARC=yes
+LOOKUP_INCLUDE += -I/usr/include
+LOOKUP_LIBS += -lopendmarc
+
+# Enable Internationalization
+SUPPORT_I18N=yes
+LOOKUP_LIBS += -lidn
+
+# Enable content scanning
+WITH_CONTENT_SCAN=yes
+
+# Enable cdb lookup
+LOOKUP_CDB=yes
+
+# Enable LDAP lookup
+LOOKUP_LDAP=yes
+LDAP_LIB_TYPE=OPENLDAP2
+LOOKUP_LIBS += -lldap -llber
+
+# Enable passwd lookup
+LOOKUP_PASSWD=yes
+
+# Enable Authenticators
+AUTH_CRAM_MD5=yes
+AUTH_DOVECOT=yes
+AUTH_PLAINTEXT=yes
+AUTH_SPA=no
+
+# Enable mail storage formats
+SUPPORT_MAILDIR=yes
+SUPPORT_MAILSTORE=yes
+SUPPORT_MBX=yes
+
+# Ensure necessary routers and transports are included
+ROUTER_ACCEPT=yes
+ROUTER_DNSLOOKUP=yes
+ROUTER_IPLITERAL=yes
+ROUTER_MANUALROUTE=yes
+ROUTER_QUERYPROGRAM=yes
+ROUTER_REDIRECT=yes
+
+TRANSPORT_APPENDFILE=yes
+TRANSPORT_AUTOREPLY=yes
+TRANSPORT_PIPE=yes
+TRANSPORT_SMTP=yes
+
+# Set Fixed never_users (keeping default for security)
+FIXED_NEVER_USERS=root
+
