@@ -15,9 +15,17 @@ This repository contains the Dockerfile for building a lightweight Exim mail ser
 
 ## How to Use
 
+### Pull the Image from Docker Hub
+
+You can pull the pre-built Exim image from Docker Hub:
+
+```bash
+docker pull olegeech/exim-alpine:latest
+```
+
 ### Build the Docker Image
 
-Clone this repository and run the following command to build the Docker image:
+If you prefer building the image from this repository, clone the repository and run the following command:
 
 ```bash
 git clone https://github.com/olegeech-me/exim-alpine.git
@@ -31,7 +39,7 @@ You can customize your Exim build by modifying the Dockerfile or the Makefile fo
 
 - **Dockerfile**: This file defines the base Alpine image, dependencies, and steps for building Exim.
 - **Custom Makefile**: Located in the `build-config/CustomMakefile`, this file allows you to control the compilation options and included features for Exim. Update this file to enable or disable specific modules, such as DNSSEC, DANE, or SPF.
-- **Default Makefile**: Serves as an example of all available Exim flags. Use it as a reference to build your own cusom Makefile.
+- **Default Makefile**: Serves as an example of all available Exim flags. Use it as a reference to build your own custom Makefile.
 
 #### Example: Customizing Makefile
 
@@ -50,15 +58,15 @@ docker build -t exim-alpine .
 ```
 
 ### Example: Run the Docker Image
+
 Here’s an example of running the container with a mounted configuration file:
 
 ```bash
 docker run -d \
     -v /path/to/exim.conf:/etc/exim/exim.conf \
-    -p 25:25
+    -p 25:25 \
     --name exim-server \
-    exim-alpine
+    olegeech/exim-alpine:latest
 ```
-
 
 
