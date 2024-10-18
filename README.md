@@ -49,9 +49,16 @@ Once you’ve made your changes, rebuild the Docker image:
 docker build -t exim-alpine .
 ```
 
-### DockerHub Automated Builds
+### Example: Run the Docker Image
+Here’s an example of running the container with a mounted configuration file:
 
-You can configure your DockerHub repository to automatically build the image whenever you push changes to the `main` branch of this repository. 
+```bash
+docker run -d \
+    -v /path/to/exim.conf:/etc/exim/exim.conf \
+    -p 25:25
+    --name exim-server \
+    exim-alpine
+```
 
-For more details, refer to the DockerHub documentation on setting up automated builds.
+
 

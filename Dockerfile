@@ -46,3 +46,6 @@ RUN cd exim-${EXIM_VERSION} && \
 # Clean up build dependencies to reduce image size
 RUN apk del build-base
 
+# Run exim in foreground and check queue run each 15 minutes
+CMD ["exim", "-v", "-bdf", "-q15m"]
+
