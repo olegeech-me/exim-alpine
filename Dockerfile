@@ -46,6 +46,9 @@ RUN cd exim-${EXIM_VERSION} && \
 # Clean up build dependencies to reduce image size
 RUN apk del build-base
 
+# By default apear at /etc/exim
+WORKDIR /etc/exim
+
 # Run exim in foreground and check queue run each 15 minutes
 ENTRYPOINT ["exim"]
 CMD ["-v", "-bdf", "-q15m"]
