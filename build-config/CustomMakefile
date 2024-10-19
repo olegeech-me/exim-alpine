@@ -8,6 +8,10 @@ SYSTEM_ALIASES_FILE=/etc/aliases
 EXIM_USER=exim
 EXIM_GROUP=exim
 
+# Base lookups
+LOOKUP_LSEARCH=yes
+LOOKUP_DBM=yes
+
 # Disable inclusion of execinfo.h to avoid dependency on execinfo.h
 CFLAGS += -DNO_EXECINFO
 
