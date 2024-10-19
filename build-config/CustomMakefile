@@ -11,6 +11,7 @@ EXIM_GROUP=exim
 # Base lookups
 LOOKUP_LSEARCH=yes
 LOOKUP_DBM=yes
+LOOKUP_DNSDB=yes
 
 # Disable inclusion of execinfo.h to avoid dependency on execinfo.h
 CFLAGS += -DNO_EXECINFO
