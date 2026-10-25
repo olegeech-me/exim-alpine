@@ -1,65 +1,24 @@
 # Exim on Alpine Docker Image
 
-This repository contains the Dockerfile for building a lightweight Exim mail server on Alpine Linux. Exim is compiled with support for LDAP, TLS, content scanning using ClamAV, and other important modules.
+Exim on Alpine with LDAP, TLS, content scanning, SPF, DKIM, and DMARC.
 
-## Features
+- **Exim**: 4.100.1
+- **Alpine**: 3.24.3
+- **Build**: multi-stage
 
-- **Exim version**: 4.98
-- **Base image**: Alpine Linux 3.20-latest
-- **Modules included**:
-  - LDAP support
-  - TLS with OpenSSL
-  - Content scanning
-  - SPF, DKIM, and DMARC
-  - Maildir support
-
-## How to Use
-
-### Pull the Image from Docker Hub
-
-You can pull the pre-built Exim image from Docker Hub:
+## Pull
 
 ```bash
 docker pull olegeech/exim-alpine:latest
 ```
 
-### Build the Docker Image
-
-If you prefer building the image from this repository, clone the repository and run the following command:
+## Build
 
 ```bash
-git clone https://github.com/olegeech-me/exim-alpine.git
-cd exim-alpine
-docker build -t exim-alpine .
+docker build -t olegeech/exim-alpine:latest .
 ```
 
-### Customizing the Build
-
-You can customize your Exim build by modifying the Dockerfile or the Makefile found in the `build-config` directory.
-
-- **Dockerfile**: This file defines the base Alpine image, dependencies, and steps for building Exim.
-- **Custom Makefile**: Located in the `build-config/CustomMakefile`, this file allows you to control the compilation options and included features for Exim. Update this file to enable or disable specific modules, such as DNSSEC, DANE, or SPF.
-- **Default Makefile**: Serves as an example of all available Exim flags. Use it as a reference to build your own custom Makefile.
-
-#### Example: Customizing Makefile
-
-To add or remove features from your Exim build, edit the `CustomMakefile`:
-
-```bash
-# Example: Disable DNSSEC and DANE support
-DISABLE_DNSSEC=yes
-SUPPORT_DANE=no
-```
-
-Once you’ve made your changes, rebuild the Docker image:
-
-```bash
-docker build -t exim-alpine .
-```
-
-### Example: Run the Docker Image
-
-Here’s an example of running the container with a mounted configuration file:
+## Run
 
 ```bash
 docker run -d \
@@ -68,5 +27,3 @@ docker run -d \
     --name exim-server \
     olegeech/exim-alpine:latest
 ```
-
-

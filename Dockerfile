@@ -1,13 +1,14 @@
-FROM alpine:3.20
+ARG ALPINE_VERSION=3.24.3
+ARG EXIM_VERSION=4.100.1
 
-LABEL maintainer="olegeech <olegeech@sytkovo.su>"
+# ---------------------------------------------------------------------------
+# Build stage
+# ---------------------------------------------------------------------------
+FROM alpine:${ALPINE_VERSION} AS builder
 
-ARG EXIM_VERSION=4.98
+ARG EXIM_VERSION
 ARG MAKEFILE=build-config/CustomMakefile
 
-ENV EXIM_VERSION=${EXIM_VERSION}
-
-# Install necessary dependencies for building Exim
 RUN apk add --no-cache \
     build-base \
     openssl-dev \
@@ -20,36 +21,57 @@ RUN apk add --no-cache \
     linux-pam-dev \
     gnu-libiconv-dev \
     libidn-dev \
-    tdb-libs \
+    tdb-dev \
     perl-file-fcntllock \
-    gawk
+    gawk \
+    wget
 
-# Set up Exim build environment
-WORKDIR /usr/local/src
-
-# Add exim user
 RUN addgroup -S exim && \
     adduser -S -G exim -h /var/spool/exim -s /sbin/nologin exim
 
-# Download and extract Exim source
-RUN wget https://ftp.exim.org/pub/exim/exim4/exim-${EXIM_VERSION}.tar.gz && \
-    tar xzf exim-${EXIM_VERSION}.tar.gz && \
-    rm exim-${EXIM_VERSION}.tar.gz
+WORKDIR /usr/local/src
 
-# Add config for building
+RUN wget -q "https://ftp.exim.org/pub/exim/exim4/exim-${EXIM_VERSION}.tar.gz" && \
+    tar xzf "exim-${EXIM_VERSION}.tar.gz" && \
+    rm "exim-${EXIM_VERSION}.tar.gz"
+
 COPY ${MAKEFILE} exim-${EXIM_VERSION}/Local/Makefile
 
-# Build and install Exim
-RUN cd exim-${EXIM_VERSION} && \
-    make && make install
+RUN cd "exim-${EXIM_VERSION}" && \
+    make -j"$(nproc)" && \
+    make install
 
-# Clean up build dependencies to reduce image size
-RUN apk del build-base
+# ---------------------------------------------------------------------------
+# Runtime stage
+# ---------------------------------------------------------------------------
+FROM alpine:${ALPINE_VERSION}
 
-# By default apear at /etc/exim
+ARG EXIM_VERSION
+LABEL maintainer="olegeech <olegeech@sytkovo.su>"
+LABEL org.opencontainers.image.title="exim-alpine"
+LABEL org.opencontainers.image.description="Exim on Alpine with LDAP, TLS, content scanning, SPF/DKIM/DMARC"
+LABEL org.opencontainers.image.version="${EXIM_VERSION}"
+
+RUN apk add --no-cache \
+    ca-certificates \
+    openssl \
+    libldap \
+    libspf2 \
+    opendmarc \
+    pcre2 \
+    tdb-libs \
+    db \
+    libidn \
+    linux-pam \
+    gnu-libiconv \
+    && addgroup -S exim \
+    && adduser -S -G exim -h /var/spool/exim -s /sbin/nologin exim \
+    && mkdir -p /etc/exim /var/spool/exim /var/log/exim \
+    && chown -R exim:exim /var/spool/exim /var/log/exim
+
+COPY --from=builder /usr/bin/exim /usr/bin/exim
+
 WORKDIR /etc/exim
 
-# Run exim in foreground and check queue run each 15 minutes
 ENTRYPOINT ["exim"]
 CMD ["-v", "-bdf", "-q15m"]
-
